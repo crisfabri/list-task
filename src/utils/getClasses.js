@@ -1,4 +1,4 @@
-export const getclasses = (classes) =>
+export const getClasses = (classes) =>
   classes
     .filter((item) => item !== '')
     .join(' ')
