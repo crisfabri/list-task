@@ -1,31 +1,36 @@
-.app__wrapper {
-  max-width: 750px;
-  width: 100%;
-  margin: 0 auto;
-}
-.Header {
+.modalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: space-between;
-  height: 60px;
+  z-index: 1000;
 }
-.content__wrapper {
-  background-color: var(--bg-2);
+
+.modalContent {
+  background: #fff;
   padding: 2rem;
-  border-radius: 12px;
-}
-.emptyText {
-  // display: inline-block;
-  font-size: 1.6rem;
-  font-weight: 500;
-  color: var(--black-2);
-  text-align: center;
-  margin: 0 auto;
-  padding: 0.5rem 1rem;
   border-radius: 8px;
-  background-color: var(--gray-2);
-  width: max-content;
-  height: auto;
+  max-width: 500px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .closeButton {

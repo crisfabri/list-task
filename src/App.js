@@ -1,42 +1,73 @@
+import React, { useEffect, useState } from 'react';
+import './App.css'; // Importa el archivo CSS global
 import Header from './components/Header/header.js';
 import Title from './components/Title/title.js';
 import Task from './components/Task/task.js';
-import './App.css';
 
-// Lista estática de tareas
-const todos = [
-  {
-    id: 1,
-    title: 'Comprar comestibles',
-    status: 'incomplete',
-    time: new Date().toISOString(),
-  },
-  {
-    id: 2,
-    title: 'Hacer ejercicio',
-    status: 'complete',
-    time: new Date().toISOString(),
-  },
-  {
-    id: 3,
-    title: 'Leer un libro',
-    status: 'incomplete',
-    time: new Date().toISOString(),
-  },
-];
+const App = () => {
+  const [todos, setTodos] = useState([]);
 
-function App() {
+  useEffect(() => {
+    const storedTodos = JSON.parse(localStorage.getItem('todos')) || [];
+    setTodos(storedTodos);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos));
+  }, [todos]);
+
+  const addTodo = (title) => {
+    const newTodo = {
+      id: Date.now(),
+      title,
+      status: 'incomplete',
+      time: new Date().toISOString(),
+    };
+    setTodos([...todos, newTodo]);
+  };
+
+  const deleteTodo = (id) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
+  };
+
+  const updateTodo = (id, updatedTitle) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, title: updatedTitle } : todo
+      )
+    );
+  };
+
+  const toggleComplete = (id) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id
+          ? {
+              ...todo,
+              status: todo.status === 'complete' ? 'incomplete' : 'complete',
+            }
+          : todo
+      )
+    );
+  };
+
   return (
     <>
       <Title>Lista Tareas</Title>
-      <Header />
+      <Header addTodo={addTodo} />
       <div>
         {todos.map((todo) => (
-          <Task key={todo.id} todo={todo} />
+          <Task
+            key={todo.id}
+            todo={todo}
+            deleteTodo={deleteTodo}
+            updateTodo={updateTodo}
+            toggleComplete={toggleComplete}
+          />
         ))}
       </div>
     </>
   );
-}
+};
 
 export default App;
