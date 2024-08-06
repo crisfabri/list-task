@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { MdDelete, MdEdit } from 'react-icons/md';
 import styles from './task.module.scss';
 import CheckButton from '../Buttons/checkButton';
+import Modal from './Modal/modal-task.js';
 
 export const getClasses = (classes) => classes.filter(Boolean).join(' ').trim();
 
@@ -34,60 +35,66 @@ function Task({ todo, deleteTodo, updateTodo, toggleComplete }) {
     toast.success('Todo Deleted Successfully');
   };
 
+  const handleEditChange = (e) => {
+    setEditText(e.target.value);
+  };
+
   const handleUpdate = () => {
     updateTodo(todo.id, editText);
     setIsEditing(false);
     toast.success('Todo Updated Successfully');
   };
 
-  const handleEditChange = (e) => {
-    setEditText(e.target.value);
-  };
-
-  const handleEditKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleUpdate();
-    }
-  };
-
   const handleEditClick = () => {
     setIsEditing(true);
   };
 
+  const handleCloseModal = () => {
+    setIsEditing(false);
+  };
+
   return (
-    <motion.div className={styles.item} variants={child}>
-      <div className={styles.taskDetails}>
-        <CheckButton checked={checked} handleCheck={handleCheck} />
-        <div className={styles.texts}>
-          {isEditing ? (
-            <input
-              type="text"
-              value={editText}
-              onChange={handleEditChange}
-              onBlur={handleUpdate}
-            />
-          ) : (
-            <button
-              type="button" // Especificamos el tipo de botón
+    <>
+      <motion.div className={styles.item} variants={child}>
+        <div className={styles.taskDetails}>
+          <CheckButton checked={checked} handleCheck={handleCheck} />
+          <div className={styles.texts}>
+            <label
               className={getClasses([
                 styles.todoText,
                 todo.status === 'complete' && styles['todoText--completed'],
               ])}
-              onClick={handleEditClick}
             >
               {todo.title}
-            </button>
-          )}
-          <p className={styles.time}>
-            {format(new Date(todo.time), 'p, MM/dd/yyyy')}
-          </p>
+            </label>
+            <p className={styles.time}>
+              {format(new Date(todo.time), 'p, MM/dd/yyyy')}
+            </p>
+          </div>
         </div>
-      </div>
-      <div className={styles.taskActions}>
-        <MdDelete onClick={handleDelete} role="button" tabIndex={0} />
-        <MdEdit onClick={handleEditClick} role="button" tabIndex={0} />
-      </div>
-    </motion.div>
+        <div className={styles.taskActions}>
+          <MdDelete onClick={handleDelete} className={styles.icon} />
+          <MdEdit onClick={handleEditClick} className={styles.icon} />
+        </div>
+      </motion.div>
+
+      <Modal show={isEditing} handleClose={handleCloseModal}>
+        <h2 className={styles.modalTitle}>Edit Task</h2>
+        <input
+          type="text"
+          value={editText}
+          onChange={handleEditChange}
+          className={styles.modalInput}
+        />
+        <button
+          type="button"
+          className={styles.modalButton}
+          onClick={handleUpdate}
+        >
+          Update Task
+        </button>
+      </Modal>
+    </>
   );
 }
 

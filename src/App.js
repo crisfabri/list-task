@@ -2,19 +2,38 @@ import React, { useEffect, useState } from 'react';
 import './App.css'; // Importa el archivo CSS global
 import Header from './components/Header/header.js';
 import Title from './components/Title/title.js';
-import Task from './components/Task/task.js';
+import TaskList from './components/TaskList/taskList.js';
 
 const App = () => {
   const [todos, setTodos] = useState([]);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
+  // Función para cargar tareas desde localStorage
+  const loadTodos = () => {
+    try {
+      const storedTodos = JSON.parse(localStorage.getItem('todos'));
+      return storedTodos || [];
+    } catch (error) {
+      console.error('Error cargando tareas desde localStorage:', error);
+      return [];
+    }
+  };
+
+  // Cargar tareas desde localStorage una vez
   useEffect(() => {
-    const storedTodos = JSON.parse(localStorage.getItem('todos')) || [];
+    const storedTodos = loadTodos();
+    console.log('Cargando tareas desde localStorage:', storedTodos);
     setTodos(storedTodos);
+    setIsInitialLoad(false);
   }, []);
 
+  // Guardar tareas en localStorage cada vez que cambian, excepto en la carga inicial
   useEffect(() => {
-    localStorage.setItem('todos', JSON.stringify(todos));
-  }, [todos]);
+    if (!isInitialLoad) {
+      console.log('Guardando tareas en localStorage:', todos);
+      localStorage.setItem('todos', JSON.stringify(todos));
+    }
+  }, [todos, isInitialLoad]);
 
   const addTodo = (title) => {
     const newTodo = {
@@ -23,24 +42,24 @@ const App = () => {
       status: 'incomplete',
       time: new Date().toISOString(),
     };
-    setTodos([...todos, newTodo]);
+    setTodos((prevTodos) => [...prevTodos, newTodo]);
   };
 
   const deleteTodo = (id) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
+    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
   };
 
   const updateTodo = (id, updatedTitle) => {
-    setTodos(
-      todos.map((todo) =>
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) =>
         todo.id === id ? { ...todo, title: updatedTitle } : todo
       )
     );
   };
 
   const toggleComplete = (id) => {
-    setTodos(
-      todos.map((todo) =>
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) =>
         todo.id === id
           ? {
               ...todo,
@@ -55,17 +74,12 @@ const App = () => {
     <>
       <Title>Lista Tareas</Title>
       <Header addTodo={addTodo} />
-      <div>
-        {todos.map((todo) => (
-          <Task
-            key={todo.id}
-            todo={todo}
-            deleteTodo={deleteTodo}
-            updateTodo={updateTodo}
-            toggleComplete={toggleComplete}
-          />
-        ))}
-      </div>
+      <TaskList
+        todos={todos}
+        deleteTodo={deleteTodo}
+        updateTodo={updateTodo}
+        toggleComplete={toggleComplete}
+      />
     </>
   );
 };

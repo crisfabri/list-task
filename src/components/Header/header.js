@@ -28,10 +28,11 @@ function Header({ addTodo }) {
   };
 
   return (
-    <div className={styles.header}>
+    <div className={styles.Header}>
       <Button variant="primary" onClick={handleOpenModal}>
         Add Task
       </Button>
+
       <Modal show={isModalOpen} handleClose={handleCloseModal}>
         <h2 className={styles.modalTitle}>Add New Task</h2>
         <input

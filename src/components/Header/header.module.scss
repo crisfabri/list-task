@@ -3,12 +3,17 @@
   width: 100%;
   margin: 0 auto;
 }
+
 .Header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  height: 60px;
+  justify-content: right;
+  padding: 1rem;
+  background-color: var(--primary);
+  color: var(--white);
+  border-radius: 8px;
 }
+
 .content__wrapper {
   background-color: var(--bg-2);
   padding: 2rem;
